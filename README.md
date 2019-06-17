@@ -16,6 +16,7 @@ Grab's Traffic Management Challenge: https://www.aiforsea.com/traffic-management
 
 
    Observations and Assumptions about the Data:
+
    + This Spatio-Temporal time series very clearly have a distinctive:
      ++ HEAD for geohashes with data-points above the 1000('s),
      ++ a clear TORSO for those geohashes having more than 21 datapoints but less than a 1,000.
@@ -36,8 +37,12 @@ Grab's Traffic Management Challenge: https://www.aiforsea.com/traffic-management
      My assumption is that these MISSING values are ZERO.
      This is a convenient assumption, the data suggests otherwise; that is,
         these are mostly ZEROs but at times the value of Demand is non-zero yet
-	still is missing. (Example for this scenario is attached below).
+	still is missing. (Example for this scenario is attached 'IMG_0338_Missing_Data.jpg').
 
+     Clearly Missing: the 3rd Peak in the file 'IMG_0338_Missing_Data.jpg'. The data is an aggregated 20-geo6's
+        for 14 days. There must have been some data outage -- that could be the reason the data is missing.
+	This, however is not the objective of this Challenge. 
+     
      The focus for this execrcise is NOT to fill in missing data -- although
         the same prediction process could also be used for that --
 	hence is the assumption that if data is MISSING then it's value is ZERO.
@@ -88,7 +93,16 @@ Grab's Traffic Management Challenge: https://www.aiforsea.com/traffic-management
 	
 
 4. Data Preparation:
-      
+   Data is prepared using a Perl script named 'prepare_data_for_DL_TRAIN.pl' in the data directory.
+   This script reads the provided traffic.csv file and prepares it as input for DL_regression.py .
+   It prepares 4 files (submitted) for the various stages of the Training process.
+
+   Training is done by 'python DL_regression.py' command.
+
+   Testing then done by:
+   + prepare Test data using 'data/prepare_data_for_DL_TEST.pl'
+   + load latest model in to DL
+   + input the file to 'src/DL_regression_TEST_only.py'
 
 
 5. Running the model & Tranfer Learning:
@@ -107,6 +121,17 @@ Grab's Traffic Management Challenge: https://www.aiforsea.com/traffic-management
 
 
 6. Results:
+   First and foremost, one more comment about the data before we proceed.
+   I tried to separate week days from weekend days based upon the time of demand differences.
+   For example,
+      + weekend day: peak demand for the day at 2:00 am is more likely to show up on a weekend day,
+      + week day: an 8:00 am hour peak is more likely indicate week days.
+   I found the exact patterns I was looking for using both the highest and lowest demand hours.
+   I also found that these days are not apart by the usual of 6 to 7 days. Granted, there may be holidays.
+   But still, the 'weekend' days occured between 4 to 15 days of each other.
+   This makes me wonder if 'weekend' days may have been spread around weekdays in the data set by using
+   '4 + rand() * (15 -4)'. 
+
    Although large dataset for a 16Gb home desktop PC, my CNN model performs amazingly
    well even with little training.  It has an impressive RMSE of '0.0078739293461' --
    naturally, this RMSE may vary a little due to the Stochastic nature of the model. 
